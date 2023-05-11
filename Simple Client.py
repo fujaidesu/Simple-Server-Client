@@ -27,6 +27,8 @@ import pickle
 from cryptography.fernet import Fernet
 from dict2xml import dict2xml
 import configparser
+import sys
+
 
 # function to serialise dictionary
 def dict_serialisation(dictionary, serialise, data_format):
@@ -102,6 +104,8 @@ def sendtoServer(input, encryption, pickling_format):
         filesize = os.path.getsize(filepath) 
         # continue if file exists
         if filesize > 0:
+            print('The config file does exist')
+
             config_obj.read(filepath)
             param = config_obj["setting"]
             SERVER_HOST = param["host"]
@@ -109,18 +113,26 @@ def sendtoServer(input, encryption, pickling_format):
     except Exception: 
         # prevent input file which does not exist
         print('Configure file does not exist.')
+        sys.exit()
+
 
     try:
         # Create a client socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print('A client socket is created.')
     except Exception:
         print('Fail to create client socket.')
+        sys.exit()
+
         
     try:
         # Connect to the server
-        s.connect((SERVER_HOST, SERVER_PORT))  
+        s.connect((SERVER_HOST, SERVER_PORT))
+        print('The client has connected to the server')
     except Exception:
         print('Fail to connect to the server.')
+        sys.exit()
+
         
     # if user input a dictionary
     if isinstance(input, dict):
